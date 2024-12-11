@@ -1,8 +1,10 @@
-This repository showcases how to circumvent the "filesystem sandbox" in node:wasi.
+This repository showcases how to open files outside the "filesystem sandbox" in node:wasi.
 
-The `WASI` class has a `preopens` parameter that describes what files the WASM program has access to. Usually, accessing files outside of that results in a "file not found error", but it's possible to circumvent that if a symlink replaces the file at a very precise moment.
+The `WASI` class has a `preopens` parameter that describes what files the WASM program has access to. Usually, accessing files outside of it results in a "file not found" error, but it's possible to circumvent that if a symlink replaces the file at a very precise moment.
 
-This relies on an outside process to happen and it's not really a problem in practice, but it means that node:wasi isn't fully compliant with the [WASI filesystem specification](https://github.com/WebAssembly/wasi-filesystem/blob/main/path-resolution.md)
+This relies on an outside process to happen and isn't really a problem in practice since most people aren't trying to run malicious code with node:wasi in the first place.
+
+It just means that node:wasi isn't fully compliant with the [WASI filesystem specification](https://github.com/WebAssembly/wasi-filesystem/blob/main/path-resolution.md)
 
 > Importantly, the sandboxing is designed to be implementable even in the presence of outside processes accessing the same filesystem, including renaming, unlinking, and creating new files and directories.
 
@@ -14,7 +16,7 @@ This relies on an outside process to happen and it's not really a problem in pra
 
 3. open another terminal and run `node main.js | grep OUTSIDE`
 
-## Result
+## Actual Result
 
 hello.wasm is able to open ./outside.txt
 
@@ -29,7 +31,7 @@ Data: !!!! OUTSIDE - THIS FILE SHOULD NOT BE READABLE BY HELLO.WASM
 
 ## Expected result
 
-WASM programs using WASI should be not able to open symlinks pointing outside the preopens directory.
+Code using WASI should be not able to open any files outside the preopens directory.
 
 ```
 $ ln -sf ../outside.txt preopens/inside.txt
@@ -48,6 +50,6 @@ Error: no such file or directory
 
 3. [uv_fs_open](https://github.com/nodejs/uvwasi/blob/main/src/uvwasi.c#L2093C7-L2093C17) is called with `preopens/inside.txt` and opens `outside.txt`, which WASI is not supposed to allow.
 
-## Consequences
+## Conclusion
 
-If you run malicious code using node:wasi, it can potentially open files outside the preopens dir.
+Do not rely on node:wasi to run malicious code, as it can access files outside the preopens directory.
