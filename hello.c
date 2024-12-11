@@ -6,12 +6,7 @@
 #include <fcntl.h>
 
 int main() {
-	char cwd[100] = { 0 };
-   	getcwd(cwd, sizeof(cwd));
-
-   	printf("cwd is %s\n", cwd);
-
-	int fd = open("./inside.txt", O_RDONLY);
+	int fd = open("/inside.txt", O_RDONLY);
 
 	if (fd < 0) {
 		printf("Error %s\n", strerror(errno));
