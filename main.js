@@ -4,22 +4,20 @@ const { argv, env } = require('node:process');
 const { join } = require('node:path');
 
 (async () => {
-  while (true) { 
-    const wasi = new WASI({
-      version: 'preview1',
-      args: argv,
-      env,
-      preopens: {
-        '/': join(__dirname, 'preopens'),
-      },
-    });
+  const wasi = new WASI({
+    version: 'preview1',
+    args: argv,
+    env,
+    preopens: {
+      '/': join(__dirname, 'preopens'),
+    },
+  });
 
-    const wasm = await WebAssembly.compile(
-      await readFile(join(__dirname, 'hello.wasm')),
-    );
+  const wasm = await WebAssembly.compile(
+    await readFile(join(__dirname, 'hello.wasm')),
+  );
 
-    const instance = await WebAssembly.instantiate(wasm, wasi.getImportObject());
+  const instance = await WebAssembly.instantiate(wasm, wasi.getImportObject());
 
-    wasi.start(instance);
-  }
+  wasi.start(instance);
 })();

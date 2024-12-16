@@ -6,18 +6,20 @@
 #include <fcntl.h>
 
 int main() {
-	int fd = open("/inside.txt", O_RDONLY);
+	while (1) {
+		int fd = open("/inside.txt", O_RDONLY);
 
-	if (fd < 0) {
-		printf("Error %s\n", strerror(errno));
-		return 0;
+		if (fd < 0) {
+			printf("Error %s\n", strerror(errno));
+			continue;
+		}
+
+		char buf[64] = { 0 };
+		read(fd, buf, (sizeof buf) - 1);
+
+		printf("Data: %s\n", buf);
+
+		close(fd);
 	}
-
-	char buf[64] = { 0 };
-	read(fd, buf, (sizeof buf) - 1);
-
-	printf("Data: %s\n", buf);
-
-	close(fd);
 	return 0;
 }
