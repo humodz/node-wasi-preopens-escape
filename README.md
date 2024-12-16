@@ -2,8 +2,6 @@ This repository showcases how to open files outside the "filesystem sandbox" in 
 
 The `WASI` class has a `preopens` parameter that describes what files the WASM program has access to. Usually, accessing files outside of it results in a "file not found" error, but it's possible to circumvent that if a symlink replaces the file at a very precise moment.
 
-This relies on an outside process and isn't really a problem in practice since most people aren't trying to run malicious code with node:wasi in the first place.
-
 It just means that node:wasi doesn't fully implement the [WASI filesystem specification](https://github.com/WebAssembly/wasi-filesystem/blob/main/path-resolution.md)
 
 > Importantly, the sandboxing is designed to be implementable even in the presence of outside processes accessing the same filesystem, including renaming, unlinking, and creating new files and directories.
